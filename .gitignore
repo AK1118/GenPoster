@@ -1,0 +1,12 @@
+node_modules
+public
+NEED.md
+dist
+public
+*.zip
+*.7z
+*.rar
+*/node_modules
+.yalc
+example/.yalc
+example/node_modules
