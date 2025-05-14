@@ -40,7 +40,7 @@ import {
   TextSpanOption,
   LayoutBuilder as LayoutBuilderWidget,
   BoxConstraints,
-} from "gen-ui";
+} from "./gen-ui";
 
 type P<T> = Partial<Omit<T, "key">>;
 

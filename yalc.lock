@@ -1,9 +1,0 @@
-{
-  "version": "v1",
-  "packages": {
-    "gen-ui": {
-      "signature": "ecd44ce5292c8d97c2727a43c8499d5d",
-      "file": true
-    }
-  }
-}

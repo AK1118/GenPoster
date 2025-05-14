@@ -16,4 +16,4 @@ export {
   WrapCrossAlignment,
   StackFit,
   Clip,
-} from "gen-ui";
+} from "./gen-ui";

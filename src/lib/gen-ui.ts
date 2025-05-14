@@ -1,1 +1,1 @@
-export * from "gen-ui"
+export * from "./gen-ui"
