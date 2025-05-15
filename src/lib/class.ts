@@ -22,4 +22,7 @@ export {
   DefaultNativeStrategies,
   ScreenUtils,
   NativeStrategies,
-} from "./gen-ui";
+  NativeAssetsImageStrategy,
+  NativeNetWorkImageStrategy,
+  Widget
+} from "../gen-ui";

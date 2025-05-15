@@ -40,7 +40,14 @@ import {
   TextSpanOption,
   LayoutBuilder as LayoutBuilderWidget,
   BoxConstraints,
-} from "./gen-ui";
+  Padding as PaddingWidget,
+  PaddingOption,
+  Expanded as ExpandedWidget,
+  Align as AlignWidget,
+  AlignArguments,
+  Center as CenterWidget,
+  Alignment,
+} from "../gen-ui";
 
 type P<T> = Partial<Omit<T, "key">>;
 
@@ -49,6 +56,13 @@ const _WidgetFactory = <W extends Widget, Args>(
   widgetClass: new (...args: any[]) => W
 ): W => {
   return Reflect.construct(widgetClass, [args]);
+};
+
+const _WidgetFunctionFactory = <W, Args>(
+  args: P<Args>,
+  builder: (...args: any[]) => W
+): W => {
+  return builder(args);
 };
 
 /**
@@ -145,57 +159,67 @@ export const Transform = (args: P<TransformArgs>) =>
 
 export type TranslateArgs = TransformTranslateArguments &
   SingleChildRenderObjectWidgetArguments;
+
 /**
  * # 变换组件中的平移
  * - 用于对子组件进行平移。
  */
 export const Translate = (args: P<TranslateArgs>) =>
-  _WidgetFactory(args, TransformWidget);
+  _WidgetFunctionFactory<TransformWidget, TranslateArgs>(
+    args,
+    (args: P<TranslateArgs>) => TransformWidget.translate(args)
+  );
 
 export type ScaleArgs = TransformScaleArguments &
   SingleChildRenderObjectWidgetArguments;
+
 /**
  * # 变换组件中的缩放
  * - 用于对子组件进行缩放。
  */
 export const Scale = (args: P<ScaleArgs>) =>
-  _WidgetFactory(args, TransformWidget);
-
+  _WidgetFunctionFactory<TransformWidget, ScaleArgs>(
+    args,
+    (args: P<ScaleArgs>) => TransformWidget.scale(args)
+  );
 export type RotateArgs = TransformRotateArguments &
   SingleChildRenderObjectWidgetArguments;
+
 /**
  * # 变换组件中的旋转
  * - 用于对子组件进行旋转。
  */
 export const Rotate = (args: P<RotateArgs>) =>
-  _WidgetFactory(args, TransformWidget);
+  _WidgetFunctionFactory<TransformWidget, RotateArgs>(
+    args,
+    (args: P<RotateArgs>) => TransformWidget.rotate(args)
+  );
 
 export type SkewArgs = TransformSkewArguments &
   SingleChildRenderObjectWidgetArguments;
+
 /**
  * # 变换组件中的倾斜
  * - 用于对子组件进行倾斜。
  */
 export const Skew = (args: P<SkewArgs>) =>
-  _WidgetFactory(args, TransformWidget);
-
-export type TextArgs = TextArguments & SingleChildRenderObjectWidgetArguments;
-
-type __ = { text: string; option?: P<TextArguments> };
-class GenPosterText extends StatelessWidget {
-  constructor(private _option: __) {
-    super();
-  }
-  build(context: BuildContext): Widget {
-    return new TextWidget(this._option.text, this._option.option);
-  }
-}
+  _WidgetFunctionFactory<TransformWidget, SkewArgs>(args, (args: P<SkewArgs>) =>
+    TransformWidget.skew(args)
+  );
+export type TextArgs = TextArguments;
 /**
  * # 文本组件
  * - 支持文本样式等配置。
  */
-export const Text = (text: string, option: P<TextArguments>) => {
-  return _WidgetFactory({ text, option }, GenPosterText);
+export const Text = (text: string, option: P<TextArgs>) => {
+  const args = {
+    text: text,
+    option: option,
+  };
+  return _WidgetFunctionFactory<TextWidget, TextArgs & { text: string }>(
+    args,
+    ({ text, option }) => new TextWidget(text, option)
+  );
 };
 
 export type SizedBoxArgs = SizedBoxOption &
@@ -235,8 +259,7 @@ export type TextSpanArgs = TextSpanOption;
 /**
  * # 文本片段组件
  */
-export const TextSpan = (args: Partial<TextSpanArgs>) =>
-  new TextInlineSpan(args);
+export const TextSpan = (args: Partial<TextSpanArgs>) => _WidgetFunctionFactory(args,(args)=>new TextInlineSpan(args))
 
 export type LayoutWidgetBuilder = (
   context: BuildContext,
@@ -248,3 +271,34 @@ export type LayoutWidgetBuilder = (
  */
 export const LayoutBuilder = (args: P<{ builder: LayoutWidgetBuilder }>) =>
   _WidgetFactory(args, LayoutBuilderWidget);
+
+export type PaddingArgs = PaddingOption &
+  SingleChildRenderObjectWidgetArguments;
+/**
+ * # 内边距组件
+ */
+export const Padding = (
+  args: P<PaddingArgs & SingleChildRenderObjectWidgetArguments>
+) => _WidgetFactory(args, PaddingWidget);
+
+export type ExpandedArgs = {
+  flex: number;
+} & SingleChildRenderObjectWidgetArguments;
+/**
+ * # 弹性布局组件
+ */
+export const Expanded = (args: P<ExpandedArgs>) =>
+  _WidgetFactory(args, ExpandedWidget);
+
+export type AlignArgs = AlignArguments & SingleChildRenderObjectWidgetArguments;
+/**
+ * # 对齐组件
+ */
+export const Align = (args: P<AlignArgs>) =>
+  _WidgetFactory(args, AlignWidget);
+
+export type CenterArgs = SingleChildRenderObjectWidgetArguments;
+/**
+ * # 居中组件
+ */
+export const Center = (args: P<CenterArgs>) => _WidgetFactory(args, CenterWidget);

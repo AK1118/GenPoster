@@ -4,7 +4,7 @@ import "./demos/template"
 //@ts-ignore
 import eruda from "eruda";
 eruda.init();
-import runApp, { Colors, Container } from "@/index";
+import runApp, { Colors, Container } from "../index";
 import { GenPlatformConfig } from "@/lib/core/platform";
 import { NativeEventsBindingHandler } from "@/lib/native/events";
 import { DefaultNativeStrategies } from "@/lib/native/native-strategies";

@@ -124,7 +124,7 @@ export class NetWorkImageProvider extends ImageProvider {
   }
 }
 
-export type AssetsImageUrlBuilder = () => (Promise<string> | string) | string;
+export type AssetsImageUrlBuilder = (() => Promise<string> | string) | string;
 export class AssetsImageProvider extends ImageProvider {
   private _assetsImageUrl: AssetsImageUrlBuilder;
   constructor({
@@ -138,12 +138,11 @@ export class AssetsImageProvider extends ImageProvider {
     this._assetsImageUrl = assetsImageUrl;
   }
   async performLoad(): Promise<ImageLoadPayload> {
-    const urlBuilder =
+    const urlBuilt =
       typeof this._assetsImageUrl === "function"
         ? this._assetsImageUrl()
         : this._assetsImageUrl;
-    const url =
-      urlBuilder instanceof Promise ? await this._assetsImageUrl() : urlBuilder;
+    const url = urlBuilt instanceof Promise ? await urlBuilt : urlBuilt;
     const image = await this.loadAssetsStrategy.load({
       url: url,
     });

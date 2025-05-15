@@ -13,7 +13,7 @@
     "baseUrl": "src/",
     "experimentalDecorators": true,
     "paths": {
-      "@/lib/*": ["lib/*"],
+      "@/lib/*": ["gen-ui/lib/*"],
       "@/*": ["*"]
     }
   },

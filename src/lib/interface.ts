@@ -6,4 +6,4 @@ export {
   ImageProviderLifecycle,
   ImageStreamPayload,
   ImagePlaceholderBuilder,
-} from "./gen-ui";
+} from "../gen-ui";
