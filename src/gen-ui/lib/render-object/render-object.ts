@@ -1,4 +1,4 @@
-import Painter from "@/lib/painting/painter";
+import {Painter} from "@/lib/painting/painter";
 import Alignment from "@/lib/painting/alignment";
 import Rect, { Offset, Size } from "@/lib/basic/rect";
 import Constraints, { BoxConstraints } from "@/lib/rendering/constraints";

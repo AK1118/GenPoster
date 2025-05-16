@@ -14,7 +14,7 @@ import { Duration } from "../core/duration";
 import Vector, { Offset } from "../math/vector";
 import { TextEditingValue, TextInput } from "../native/text-input";
 import { Color, Colors } from "../painting/color";
-import Painter from "../painting/painter";
+import {Painter} from "../painting/painter";
 import { TextPainter, TextSpan, TextStyle } from "../painting/text-painter";
 import { RenderView } from "../render-object/render-object";
 import { EditTextRenderView } from "../render-object/text";

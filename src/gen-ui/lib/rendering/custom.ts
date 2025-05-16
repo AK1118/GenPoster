@@ -1,7 +1,7 @@
 import { Size } from "../basic/rect";
 import { ChangeNotifier, Listenable } from "../core/change-notifier";
 import Vector from "../math/vector";
-import Painter from "../painting/painter";
+import {Painter} from "../painting/painter";
 import { Queue } from "../utils/utils";
 import { Path2D } from "./path-2D";
 

@@ -3,7 +3,7 @@ import Vector from "../math/vector";
 import { BoxBorder } from "./borders";
 import { Color } from "./color";
 import { Gradient } from "./gradient";
-import Painter from "./painter";
+import {Painter} from "./painter";
 import { BorderRadius } from "./radius";
 import BoxShadow from "./shadow";
 

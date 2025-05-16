@@ -9,7 +9,7 @@ import TapGestureRecognizer from "../gesture/recognizers/tap";
 import { Matrix4 } from "../math/matrix";
 import Vector, { Offset } from "../math/vector";
 import { Color, Colors } from "../painting/color";
-import Painter from "../painting/painter";
+import {Painter} from "../painting/painter";
 import { TextPainter, TextSpan, TextStyle } from "../painting/text-painter";
 import { CustomPainter } from "../rendering/custom";
 import {

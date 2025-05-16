@@ -2,7 +2,7 @@ import { Size } from "../basic/rect";
 import { BorderStyle } from "../core/base-types";
 import Vector from "../math/vector";
 import {Color } from "./color";
-import Painter from "./painter";
+import {Painter} from "./painter";
 import {BorderRadius} from "./radius";
 
 /**

@@ -7,7 +7,7 @@
 import { Size } from "../basic/rect";
 import { HitTestResult } from "../gesture/hit_test";
 import Vector from "../math/vector";
-import Painter from "../painting/painter";
+import {Painter} from "../painting/painter";
 
 type PathTypes = "rect" | "arc" | "lineTo" | "moveTo" | "arcTo";
 

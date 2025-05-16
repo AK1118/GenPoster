@@ -69,7 +69,6 @@ GenPlatformConfig.InitInstance({
   strategies: new DefaultNativeStrategies(),
   showBanner: true,
 });
-
 // const nativeTextInputHandler = new NativeTextInputHandler();
 // const inputBar = document.querySelector("#inputbar") as HTMLInputElement;
 // inputBar.value = `123`;

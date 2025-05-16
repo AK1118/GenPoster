@@ -1,5 +1,5 @@
 import { Shadow } from "../core/base-types";
-import Painter from "./painter";
+import {Painter} from "./painter";
 
 export class BoxShadow {
   shadow: Shadow;

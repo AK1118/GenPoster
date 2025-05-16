@@ -24,7 +24,7 @@ import LongPressGestureRecognizer from "../gesture/recognizers/long-press";
 import PanDragGestureRecognizer from "../gesture/recognizers/pan-drag";
 import { clamp } from "../math/math";
 import Vector from "../math/vector";
-import Painter from "../painting/painter";
+import {Painter} from "../painting/painter";
 import { axisDirectionToAxis } from "../render-object/slivers";
 import {
   ScrollPosition,

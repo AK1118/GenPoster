@@ -4,8 +4,8 @@ import {
   SingleChildRenderObjectWidgetArguments,
 } from "../basic/framework";
 import Rect from "../basic/rect";
+import { GenPlatformConfig } from "../core/platform";
 import Vector, { Offset } from "../math/vector";
-import Painter from "../painting/painter";
 import { PaintingContext, SingleChildRenderView } from "../render-object/basic";
 import { RenderView } from "../render-object/render-object";
 
@@ -26,11 +26,18 @@ export class RepaintBoundaryRenderView extends SingleChildRenderView {
 
   performLayout(): void {
     super.performLayout();
-    if (!this._layer || this._layer.width !== this.size.width || this._layer.height !== this.size.height) {
+    if (
+      !this._layer ||
+      this._layer.width !== this.size.width ||
+      this._layer.height !== this.size.height
+    ) {
       this._layer = new OffscreenCanvas(this.size.width, this.size.height);
       const ctx = this._layer.getContext("2d")!;
+      const strategies = GenPlatformConfig.instance.strategies;
+      const painterStrategy = strategies?.getPainterStrategy();
+      const painter = painterStrategy.getPainter(ctx);
       this._context = new RepaintingContext(
-        new Painter(ctx),
+        painter,
         Rect.merge(Offset.zero, this.size)
       );
       this._needsRepaint = true;
@@ -39,14 +46,20 @@ export class RepaintBoundaryRenderView extends SingleChildRenderView {
 
   render(context: PaintingContext, offset: Vector): void {
     if (this._needsRepaint) {
-      this._context.paint.clearRect(0, 0, this._layer.width, this._layer.height);
+      this._context.paint.clearRect(
+        0,
+        0,
+        this._layer.width,
+        this._layer.height
+      );
       this._context.paintChild(this.child!);
       this._needsRepaint = false;
     }
 
     context.paint.drawImage(
       this._layer,
-      0, 0,
+      0,
+      0,
       this._layer.width,
       this._layer.height,
       offset.x,
@@ -57,13 +70,16 @@ export class RepaintBoundaryRenderView extends SingleChildRenderView {
 
     // Debug stroke, optional
     if (context) {
-      context.paint.strokeStyle = 'red';
-      context.paint.strokeRect(offset.x, offset.y, this.size.width, this.size.height);
+      context.paint.strokeStyle = "red";
+      context.paint.strokeRect(
+        offset.x,
+        offset.y,
+        this.size.width,
+        this.size.height
+      );
     }
   }
-
 }
-
 
 export class RepaintBoundary extends SingleChildRenderObjectWidget {
   constructor(option: Partial<SingleChildRenderObjectWidgetArguments>) {

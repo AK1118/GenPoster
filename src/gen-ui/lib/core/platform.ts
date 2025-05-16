@@ -1,5 +1,5 @@
 import { NativeStrategies } from "../native/native-strategies";
-import Painter from "../painting/painter";
+import { Painter } from "../painting/painter";
 
 
 interface BaseConfig {
@@ -23,9 +23,7 @@ export class GenPlatformConfig {
     }
   }
   public static InitInstance(args: BaseConfig): GenPlatformConfig {
-    if (!GenPlatformConfig._instance) {
-      GenPlatformConfig._instance = new GenPlatformConfig(args);
-    }
+    GenPlatformConfig._instance = new GenPlatformConfig(args);
     return GenPlatformConfig._instance;
   }
   static get instance(): GenPlatformConfig {

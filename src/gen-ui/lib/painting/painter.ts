@@ -4,51 +4,141 @@ export enum PaintingStyle {
   fill = "fill",
   stroke = "stroke",
 }
-type PaintType = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | any;
+
+export interface Painter {
+  style: PaintingStyle;
+  canvas: HTMLCanvasElement | OffscreenCanvas | undefined;
+
+  setShadow(option?: Shadow): void;
+  restoreShadow(): void;
+
+  draw(): Promise<void>;
+  drawSync(): void;
+
+  fillRect(x: number, y: number, w: number, h: number): void;
+  strokeRect(x: number, y: number, w: number, h: number): void;
+  clearRect(x: number, y: number, w: number, h: number): void;
+
+  save(): void;
+  restore(): void;
+  beginPath(): void;
+  closePath(): void;
+  stroke(): void;
+  fill(): void;
+  clip(fillRule?: "nonzero" | "evenodd"): void;
+  rect(x: number, y: number, w: number, h: number): void;
+  moveTo(x: number, y: number): void;
+  lineTo(x: number, y: number): void;
+  arc(
+    x: number,
+    y: number,
+    radius: number,
+    start: number,
+    end: number,
+    counterclockwise?: boolean
+  ): void;
+  arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void;
+  ellipse(x: number, y: number, a: number, b: number): void;
+  roundRect(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    radii?: number | Iterable<number>
+  ): void;
+
+  drawImage(
+    image: CanvasImageSource,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    dx?: number,
+    dy?: number,
+    dw?: number,
+    dh?: number
+  ): void;
+
+  rotate(angle: number): void;
+  translate(x: number, y: number): void;
+  scale(x: number, y: number): void;
+  transform(matrix: number[]): void;
+
+  set lineWidth(width: number);
+  set fillStyle(style: string | CanvasGradient);
+  set strokeStyle(style: string | CanvasGradient);
+  set shadowColor(shadowColor: string);
+  set shadowBlur(shadowBlur: number);
+  set shadowOffsetX(shadowOffsetX: number);
+  set shadowOffsetY(shadowOffsetY: number);
+  set globalAlpha(alpha: number);
+  set font(font: string);
+  set lineCap(lineCap: CanvasLineCap);
+  set lineJoin(lineJoin: CanvasLineJoin);
+  set textBaseLine(baseLine: CanvasTextBaseline);
+
+  fillText(text: string, x: number, y: number): void;
+  strokeText(text: string, x: number, y: number, maxWidth?: number): void;
+  measureText(text: string): TextMetrics;
+
+  setLineDash(segments: Iterable<number>): void;
+
+  getImageData(x: number, y: number, w: number, h: number): ImageData;
+  putImageData(imagedata: ImageData, dx: number, dy: number): void;
+
+  createLinearGradient(
+    x0: number,
+    y0: number,
+    x1: number,
+    y1: number
+  ): CanvasGradient;
+  createRadialGradient(
+    x0: number,
+    y0: number,
+    r0: number,
+    x1: number,
+    y1: number,
+    r1: number
+  ): CanvasGradient;
+  createConicGradient(startAngle: number, x: number, y: number): CanvasGradient;
+}
+
+type PaintType =
+  | CanvasRenderingContext2D
+  | OffscreenCanvasRenderingContext2D
+  | any;
 /*
 	使用代理模式重写Painter，兼容原生Painter
 */
-class Painter {
-  private static _paint:PaintType = null;
-  paint: PaintType= null;
+export class GenPainter implements Painter {
+  private static _paint: PaintType = null;
+  paint: PaintType = null;
   style: PaintingStyle = PaintingStyle.fill;
-  constructor(
-    paint:PaintType= Painter._paint,
-    store: boolean = true
-  ) {
-    if (!paint) {
-      if (Painter._paint) {
-        this.paint = Painter._paint;
-      } else {
-        throw new Error(
-          "The Painter must insert a paint object of CanvasRenderingContext2D. Try running new Painter(g) to avoid this error.The 'g' value is a CanvasRenderingContext2D object."
-        );
-      }
-    } else if (store && paint) {
-      this.setPaintQuality(paint);
-      this.paint = paint;
-      Painter._paint = paint;
-    } else if (paint && !store) {
-      this.setPaintQuality(paint);
-      this.paint = paint;
-    }
-    // this.setPaintQuality(paint);
-    // this.paint = paint;
-    // Painter._paint ??= paint;
-    // if (Painter._paint) {
-    //   this.paint = Painter._paint;
-    // } else {
-    //   throw Error(
-    //     "The Painter must insert a paint object of CanvasRenderingContext2D. Try running new Painter(g) to avoid this error.The 'g' value is a CanvasRenderingContext2D object."
-    //   );
+  constructor(paint: PaintType = GenPainter._paint, store: boolean = true) {
+    this.paint = paint;
+    // if (!paint) {
+    //   if (GenPainter._paint) {
+    //     this.paint = GenPainter._paint;
+    //   } else {
+    //     throw new Error(
+    //       "The Painter must insert a paint object of CanvasRenderingContext2D. Try running new Painter(g) to avoid this error.The 'g' value is a CanvasRenderingContext2D object."
+    //     );
+    //   }
+    // } else if (store && paint) {
+    //   this.setPaintQuality(paint);
+    //   this.paint = paint;
+    //   GenPainter._paint = paint;
+    // } else if (paint && !store) {
+    //   this.setPaintQuality(paint);
+    //   this.paint = paint;
     // }
   }
   public static setPaint(
     paint:
       | CanvasRenderingContext2D
-      | OffscreenCanvasRenderingContext2D = Painter._paint
+      | OffscreenCanvasRenderingContext2D = GenPainter._paint
   ) {
-    Painter._paint = paint;
+    GenPainter._paint = paint;
   }
   private setPaintQuality(
     paint: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D
@@ -372,27 +462,7 @@ e 和 f 控制上下文的水平和垂直平移。
     this.lineTo(x, y + r[0]);
     this.arc(x + r[0], y + r[0], r[0], r2d * 180, r2d * 270, false);
     this.closePath();
-    // if (this.paint.roundRect) {
-    //   this.paint.roundRect(x, y, width, height, radii);
-    // } else {
-    //   const getRadius = (index: number): number => {
-    //     if (typeof radii === "number") return radii;
-    //     if (Array.isArray(radii)) {
-    //       return radii[index] ?? 0;
-    //     }
-    //   };
-    //   const paint = this.paint;
-    //   paint.beginPath();
-    //   paint.moveTo(x + getRadius(0), y);
-    //   paint.arcTo(x + width, y, x + width, y + height, getRadius(1));
-    //   paint.arcTo(x + width, y + height, x, y + height, getRadius(2));
-    //   paint.arcTo(x, y + height, x, y, getRadius(3));
-    //   paint.arcTo(x, y, x + width, y, getRadius(0));
-    //   paint.closePath();
-    // }
   }
   /*清空画布|刷新画布*/
   update() {}
 }
-
-export default Painter;

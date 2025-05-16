@@ -1,8 +1,9 @@
 import Rect, { Offset } from "../basic/rect";
+import { GenPlatformConfig } from "../core/platform";
 import { Matrix4 } from "../math/matrix";
 import Alignment from "./alignment";
-import {Color } from "./color";
-import * as ui from "@/lib/native/ui";
+import { Color } from "./color";
+
 interface GradientArguments {
   colors: Array<Color>;
   stops: Array<number>;
@@ -10,9 +11,12 @@ interface GradientArguments {
 }
 
 export abstract class Gradient {
+  protected get gradientStrategy() {
+    return GenPlatformConfig.instance.strategies.getGradientStrategy();
+  }
   constructor(
     public colors: Array<Color>,
-    public stops: Array<number>=[],
+    public stops: Array<number> = [],
     public transform: Matrix4
   ) {
     if (!colors || colors?.length === 0) {
@@ -37,7 +41,7 @@ export abstract class Gradient {
   }
 }
 
-interface LinearGradientArguments extends GradientArguments {
+export interface LinearGradientArguments extends GradientArguments {
   begin: Alignment;
   end: Alignment;
 }
@@ -51,7 +55,7 @@ export class LinearGradient extends Gradient {
     this.end = args?.end ?? Alignment.centerRight;
   }
   createShader(rect: Rect): CanvasGradient {
-    const gradient = ui.Gradient.linear(
+    const gradient = this.gradientStrategy.createLinearGradient(
       this.begin.withRect(rect),
       this.end.withRect(rect)
     );
@@ -75,7 +79,7 @@ export class RadialGradient extends Gradient {
   }
 
   createShader(rect: Rect): CanvasGradient {
-    const gradient = ui.Gradient.radial(
+    const gradient = this.gradientStrategy.createRadialGradient(
       this.center.withRect(rect),
       this.radius * rect.shortestSide
     );
@@ -84,26 +88,28 @@ export class RadialGradient extends Gradient {
   }
 }
 
-
-interface SweepGradientArguments extends GradientArguments{
-    center: Alignment;
-    startAngle: number;
-    // endAngle: number;
+interface SweepGradientArguments extends GradientArguments {
+  center: Alignment;
+  startAngle: number;
+  // endAngle: number;
 }
 
-export class SweepGradient extends Gradient{
-    private readonly center: Alignment;
-    private readonly startAngle: number;
-    private readonly endAngle: number;
-    constructor(args: Partial<SweepGradientArguments>) {
-        super(args?.colors, args?.stops, args?.transform);
-        this.center = args?.center ?? Alignment.center;
-        this.startAngle = args?.startAngle ?? 0;
-        // this.endAngle = args?.endAngle ?? Math.PI * 2;
-    }
-    createShader(rect: Rect): CanvasGradient {
-        const gradient = ui.Gradient.sweep(this.center.withRect(rect), this.startAngle);
-        this.initGradient(gradient);
-        return gradient;
-    }
+export class SweepGradient extends Gradient {
+  private readonly center: Alignment;
+  private readonly startAngle: number;
+  private readonly endAngle: number;
+  constructor(args: Partial<SweepGradientArguments>) {
+    super(args?.colors, args?.stops, args?.transform);
+    this.center = args?.center ?? Alignment.center;
+    this.startAngle = args?.startAngle ?? 0;
+    // this.endAngle = args?.endAngle ?? Math.PI * 2;
+  }
+  createShader(rect: Rect): CanvasGradient {
+    const gradient = this.gradientStrategy.createConicGradient(
+      this.center.withRect(rect),
+      this.startAngle
+    );
+    this.initGradient(gradient);
+    return gradient;
+  }
 }

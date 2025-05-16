@@ -37,8 +37,8 @@ const plugins = [
   typescript(),
   copy(copyConfig),
   //压缩打包代码
-  obfuscator(),
-  terser(),
+  // obfuscator(),
+  // terser(),
 ];
 
 const config = [

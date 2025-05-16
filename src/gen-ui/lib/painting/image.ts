@@ -5,7 +5,7 @@ import Alignment from "./alignment";
 import { applyBoxFit, BoxFit } from "./box-fit";
 import { BoxPainter, Decoration } from "./decoration";
 import { ImageProvider } from "./image-provider";
-import Painter from "./painter";
+import {Painter} from "./painter";
 
 export interface ImageDecorationArguments {
   imageProvider: ImageProvider;

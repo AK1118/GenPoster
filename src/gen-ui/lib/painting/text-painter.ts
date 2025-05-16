@@ -1,4 +1,4 @@
-import Painter, { PaintingStyle } from "@/lib/painting/painter";
+import {Painter,PaintingStyle} from "@/lib/painting/painter";
 import Rect, { Offset, Size } from "@/lib/basic/rect";
 import { GenPlatformConfig } from "../core/platform";
 import { Color } from "./color";

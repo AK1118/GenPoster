@@ -1,6 +1,6 @@
 import { PaintingContext } from "../render-object/basic";
 import { BuildOwner } from "./elements";
-import Painter from "../painting/painter";
+import {Painter} from "../painting/painter";
 import Vector from "../math/vector";
 import {
   BindingBase,

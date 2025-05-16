@@ -1,12 +1,13 @@
 import DefaultBrowserNativeEventsBindingHandler from "./defaults/pointer-event-handler";
-import { Size } from "../basic/rect";
-import Painter from "../painting/painter";
+import { Offset, Size } from "../basic/rect";
 import { AsyncStream } from "../core/stream";
 import { NativeEventsBindingHandler } from "./events";
 import {
   ImageProviderLoadConfiguration,
   ImageStreamPayload,
 } from "../core/base-types";
+import { GenPainter, Painter } from "../painting/painter";
+import { GenPlatformConfig } from "../core/platform";
 
 export abstract class Strategy {}
 /**
@@ -26,6 +27,52 @@ export abstract class NativeNetWorkImageStrategy extends Strategy {
     configuration: Partial<ImageProviderLoadConfiguration>,
     arrayBuffer: Uint8Array
   ): Promise<any>;
+}
+
+/**
+ * # 渐变策略
+ */
+export abstract class NativeGradientStrategy extends Strategy {
+  protected get painterInstance() {
+    return GenPlatformConfig.instance.painter;
+  }
+  abstract createLinearGradient(begin: Offset, end: Offset): CanvasGradient;
+  abstract createRadialGradient(center: Offset, radius: number): CanvasGradient;
+  abstract createConicGradient(
+    center: Offset,
+    startAngle: number
+  ): CanvasGradient;
+}
+
+export class DefaultNativeGradientStrategy extends NativeGradientStrategy {
+  createLinearGradient(begin: Offset, end: Offset): CanvasGradient {
+    const linearGradient = this.painterInstance.createLinearGradient(
+      begin.x,
+      begin.y,
+      end.x,
+      end.y
+    );
+    return linearGradient;
+  }
+  createRadialGradient(center: Offset, radius: number): CanvasGradient {
+    const radialGradient = this.painterInstance.createRadialGradient(
+      center.x,
+      center.y,
+      0,
+      center.x,
+      center.y,
+      radius
+    );
+    return radialGradient;
+  }
+  createConicGradient(center: Offset, startAngle: number): CanvasGradient {
+    const sweepGradient = this.painterInstance.createConicGradient(
+      startAngle,
+      center.x,
+      center.y
+    );
+    return sweepGradient;
+  }
 }
 
 /**
@@ -55,6 +102,7 @@ export abstract class NativePainterStrategy extends Strategy {
     canvasContext2D:
       | CanvasRenderingContext2D
       | OffscreenCanvasRenderingContext2D
+      | OffscreenRenderingContext
   ): Painter;
 }
 
@@ -174,6 +222,12 @@ export abstract class NativeStrategies {
    * # 获取绘制画布策略
    */
   abstract getPainterStrategy(): NativePainterStrategy;
+
+  /**
+   * # 获取渐变策略
+   */
+  abstract getGradientStrategy(): NativeGradientStrategy;
+
   /**
    * # 绑定事件处理程序
    */
@@ -185,11 +239,14 @@ class DefaultNativePainterStrategy extends NativePainterStrategy {
       | CanvasRenderingContext2D
       | OffscreenCanvasRenderingContext2D
   ): Painter {
-    return new Painter(canvasContext2D);
+    return new GenPainter(canvasContext2D);
   }
 }
 
 export class DefaultNativeStrategies extends NativeStrategies {
+  getGradientStrategy(): NativeGradientStrategy {
+    return new DefaultNativeGradientStrategy();
+  }
   getAssetsImageStrategy(): NativeAssetsImageStrategy {
     return new DefaultNativeAssetsImageStrategy();
   }
