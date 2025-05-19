@@ -10,7 +10,7 @@ export * from "./scroll";
 export * from "./image";
 export * from "./text";
 export * from "./padding";
-export * from "./colored-box"
+export * from "./colored-box";
 export * from "./clip";
 export * from "./clip-path";
 export * from "./constrained-box";
@@ -23,6 +23,6 @@ export * from "./view-port";
 export * from "./decorated-box";
 export * from "./gesture-detector";
 export * from "./paragraph";
+export * from "./opacity";
 // export * from "./mouse-region";
 // export * from "./repaint-boundary";
-

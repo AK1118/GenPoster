@@ -1,5 +1,3 @@
-import { Binding } from "./lib/basic/binding";
-import { Widget } from "./lib/basic/framework";
 export * from "./lib/render-object/index";
 export * from "./lib/widgets/index";
 export * from "./lib/painting/index";

@@ -47,7 +47,13 @@ import {
   AlignArguments,
   Center as CenterWidget,
   Alignment,
+  OpacityArguments,
+  Opacity as OpacityWidget,
+  AssetsImageProvider,
+  AssetsImageLifecycle,
+  TextStyle,
 } from "../gen-ui";
+
 
 type P<T> = Partial<Omit<T, "key">>;
 
@@ -101,10 +107,16 @@ export const Wrap = (args: P<WrapArgs>) =>
 type GenPosterImageOption = {
   assetsImageUrl: AssetsImageUrlBuilder;
   option?: Partial<ImageArguments>;
+  lifecycle?: Partial<AssetsImageLifecycle>;
 };
 class GenPosterImageWidget extends StatelessWidget {
+  private imageProvider: AssetsImageProvider;
   constructor(protected option: GenPosterImageOption) {
     super();
+    this.imageProvider = new AssetsImageProvider({
+      assetsImageUrl: option?.assetsImageUrl,
+      lifecycle: option?.lifecycle,
+    });
   }
   build(context: BuildContext): Widget {
     return ImageWidget.assets(this.option.assetsImageUrl, this.option.option);
@@ -117,13 +129,13 @@ class GenPosterImageWidget extends StatelessWidget {
  */
 export const GenPosterImage = (
   assetsImageUrl: AssetsImageUrlBuilder,
-  option?: Partial<ImageArguments>
+  option?: Partial<ImageArguments & { lifecycle?: AssetsImageLifecycle }>
 ) => {
   return _WidgetFactory<
     GenPosterImageWidget,
     {
       assetsImageUrl: AssetsImageUrlBuilder;
-      option?: Partial<ImageArguments>;
+      option?: Partial<ImageArguments &  { lifecycle?: AssetsImageLifecycle }>;
     }
   >({ assetsImageUrl, option }, GenPosterImageWidget);
 };
@@ -259,7 +271,8 @@ export type TextSpanArgs = TextSpanOption;
 /**
  * # 文本片段组件
  */
-export const TextSpan = (args: Partial<TextSpanArgs>) => _WidgetFunctionFactory(args,(args)=>new TextInlineSpan(args))
+export const TextSpan = (args: Partial<TextSpanArgs>) =>
+  _WidgetFunctionFactory(args, (args) => new TextInlineSpan(args));
 
 export type LayoutWidgetBuilder = (
   context: BuildContext,
@@ -294,11 +307,27 @@ export type AlignArgs = AlignArguments & SingleChildRenderObjectWidgetArguments;
 /**
  * # 对齐组件
  */
-export const Align = (args: P<AlignArgs>) =>
-  _WidgetFactory(args, AlignWidget);
+export const Align = (args: P<AlignArgs>) => _WidgetFactory(args, AlignWidget);
 
 export type CenterArgs = SingleChildRenderObjectWidgetArguments;
 /**
  * # 居中组件
  */
-export const Center = (args: P<CenterArgs>) => _WidgetFactory(args, CenterWidget);
+export const Center = (args: P<CenterArgs>) =>
+  _WidgetFactory(args, CenterWidget);
+
+export type OpacityArgs = OpacityArguments &
+  SingleChildRenderObjectWidgetArguments;
+
+/**
+ * # 透明度组件
+ */
+export const Opacity = (args: P<OpacityArgs>) =>
+  _WidgetFactory(args, OpacityWidget);
+
+
+Text("",{
+  style:new TextStyle({
+    
+  })
+})

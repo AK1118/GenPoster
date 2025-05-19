@@ -62,11 +62,11 @@ export abstract class ImageProvider extends ImageProviderLifecycleMethods {
   async load(): Promise<ImageLoadPayload> {
     // 考虑到会存在一个实例在图片加载完成之前被多次load的情况，使用异步懒加载缓存机制。
     // 这里挂起一个Promise,短时间内的load都会返回首次的Promise对象
-    if (!!this.loadingPromise) return this.loadingPromise;
+    if (this.loadingPromise) return this.loadingPromise;
     this.loadingPromise = new Promise<ImageLoadPayload>(
       async (resolve, reject) => {
         try {
-          if (!!this._cachedImagePayload)
+          if (this._cachedImagePayload)
             return resolve(this._cachedImagePayload);
           this.onLoadStart();
           const imageLoadPayload = await this.performLoad();
@@ -125,6 +125,7 @@ export class NetWorkImageProvider extends ImageProvider {
 }
 
 export type AssetsImageUrlBuilder = (() => Promise<string> | string) | string;
+export type AssetsImageLifecycle =  Omit<Partial<ImageProviderLifecycle>, "onProgress">;
 export class AssetsImageProvider extends ImageProvider {
   private _assetsImageUrl: AssetsImageUrlBuilder;
   constructor({
@@ -132,7 +133,7 @@ export class AssetsImageProvider extends ImageProvider {
     lifecycle,
   }: {
     assetsImageUrl: AssetsImageUrlBuilder;
-    lifecycle?: Omit<Partial<ImageProviderLifecycle>, "onProgress">;
+    lifecycle?: AssetsImageLifecycle;
   }) {
     super({ lifecycle });
     this._assetsImageUrl = assetsImageUrl;

@@ -16,4 +16,5 @@ export {
   WrapCrossAlignment,
   StackFit,
   Clip,
+  PaintingStyle
 } from "../gen-ui";

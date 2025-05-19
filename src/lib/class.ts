@@ -24,5 +24,5 @@ export {
   NativeStrategies,
   NativeAssetsImageStrategy,
   NativeNetWorkImageStrategy,
-  Widget
+  Widget,
 } from "../gen-ui";

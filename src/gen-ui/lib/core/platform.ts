@@ -1,6 +1,6 @@
+import { Key, SimpleKey } from "../basic/key";
 import { NativeStrategies } from "../native/native-strategies";
 import { Painter } from "../painting/painter";
-
 
 interface BaseConfig {
   screenWidth: number;
@@ -8,18 +8,25 @@ interface BaseConfig {
   devicePixelRatio: number;
   debug?: boolean;
   canvas?: HTMLCanvasElement;
-  renderContext?: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
-  strategies: NativeStrategies,
-  showBanner?: boolean,
+  renderContext?: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
+  strategies: NativeStrategies;
+  showBanner?: boolean;
 }
 
 export class GenPlatformConfig {
   private static _instance: GenPlatformConfig;
+  public key: Key = new SimpleKey();
   private baseConfig: BaseConfig;
   constructor(args: BaseConfig) {
     this.baseConfig = args;
-    if (this.screenWidth <= 0 || this.screenHeight <= 0 || this.devicePixelRatio <= 0) {
-      throw new Error("screenWidth, screenHeight and devicePixelRatio must be greater than 0");
+    if (
+      this.screenWidth <= 0 ||
+      this.screenHeight <= 0 ||
+      this.devicePixelRatio <= 0
+    ) {
+      throw new Error(
+        "screenWidth, screenHeight and devicePixelRatio must be greater than 0"
+      );
     }
   }
   public static InitInstance(args: BaseConfig): GenPlatformConfig {
@@ -55,7 +62,6 @@ export class GenPlatformConfig {
     return this.baseConfig?.showBanner;
   }
 
-
   get strategies(): NativeStrategies {
     return this.baseConfig?.strategies;
   }
@@ -70,4 +76,3 @@ export class GenPlatformConfig {
     return this.baseConfig?.canvas;
   }
 }
-
