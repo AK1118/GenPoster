@@ -324,10 +324,3 @@ export type OpacityArgs = OpacityArguments &
  */
 export const Opacity = (args: P<OpacityArgs>) =>
   _WidgetFactory(args, OpacityWidget);
-
-
-Text("",{
-  style:new TextStyle({
-    
-  })
-})

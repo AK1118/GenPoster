@@ -1,13 +1,9 @@
 {
-  "name": "gen-poster",
-  "version": "0.0.2",
+  "name": "gen-poster-f",
+  "version": "0.0.3",
   "main": "dist/index.esm.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
-  "exports": {
-    "import": "./dist/index.esm.js",
-    "require": "./dist/index.cjs.js"
-  },
   "files": [
     "dist/",
     "gen-ui/",
