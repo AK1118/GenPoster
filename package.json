@@ -1,6 +1,6 @@
 {
   "name": "gen-poster-f",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "dist/index.esm.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",

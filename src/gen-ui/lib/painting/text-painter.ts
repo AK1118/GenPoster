@@ -1,4 +1,4 @@
-import {Painter,PaintingStyle} from "@/lib/painting/painter";
+import { Painter, PaintingStyle } from "@/lib/painting/painter";
 import Rect, { Offset, Size } from "@/lib/basic/rect";
 import { GenPlatformConfig } from "../core/platform";
 import { Color } from "./color";
@@ -822,6 +822,7 @@ export class Paragraph extends ParagraphControl {
   }
   private performPaint(paint: Painter, offset: Offset, debugRect: boolean) {
     let child = this.firstTextPoint;
+    paint.beginPath();
     while (child != null) {
       const parentData = child.parentData;
       const { x, y } = parentData.offset;
@@ -866,7 +867,8 @@ export class Paragraph extends ParagraphControl {
           paint.stroke();
         }
       }
-
+      paint.closePath();
+      paint.stroke();
       child = parentData.nextNode;
     }
   }

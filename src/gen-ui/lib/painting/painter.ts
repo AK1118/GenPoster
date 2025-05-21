@@ -67,6 +67,7 @@ export interface Painter {
   set lineWidth(width: number);
   set fillStyle(style: string | CanvasGradient);
   set strokeStyle(style: string | CanvasGradient);
+  get strokeStyle(): string | CanvasGradient;
   set shadowColor(shadowColor: string);
   set shadowBlur(shadowBlur: number);
   set shadowOffsetX(shadowOffsetX: number);
@@ -114,7 +115,7 @@ export class GenPainter implements Painter {
   private static _paint: PaintType = null;
   paint: PaintType = null;
   style: PaintingStyle = PaintingStyle.fill;
-  constructor(paint: PaintType = GenPainter._paint, store: boolean = true) {
+  constructor(paint: PaintType = GenPainter._paint) {
     this.paint = paint;
     // if (!paint) {
     //   if (GenPainter._paint) {
@@ -161,9 +162,17 @@ export class GenPainter implements Painter {
   set fillStyle(style: string | CanvasGradient) {
     this.paint.fillStyle = style;
   }
+
+  private _strokeStyle: string | CanvasGradient;
+
   set strokeStyle(style: string | CanvasGradient) {
+    this._strokeStyle = style;
     this.paint.strokeStyle = style;
   }
+  get strokeStyle(): string | CanvasGradient {
+    return this._strokeStyle;
+  }
+
   set shadowColor(shadowColor: string) {
     this.paint.shadowColor = shadowColor;
   }
@@ -217,12 +226,17 @@ export class GenPainter implements Painter {
       }
     });
   }
+  @WithUpdateStrokeStyle
   strokeRect(x: number, y: number, w: number, h: number) {
     this.paint.strokeRect(x, y, w, h);
   }
   fillRect(x: number, y: number, w: number, h: number) {
     this.paint.fillRect(x, y, w, h);
   }
+  private _updateStrokeStyle() {
+    this.strokeStyle = this._strokeStyle;
+  }
+  @WithUpdateStrokeStyle
   stroke() {
     this.paint.stroke();
   }
@@ -335,8 +349,13 @@ export class GenPainter implements Painter {
   fillText(text: string, x: number, y: number) {
     this.paint.fillText(text, x, y);
   }
+  @WithUpdateStrokeStyle
   strokeText(text: string, x: number, y: number, maxWidth?: number) {
-    this.paint.strokeText(text, x, y, maxWidth);
+    if (maxWidth === undefined) {
+      this.paint.strokeText(text, x, y);
+    } else {
+      this.paint.strokeText(text, x, y, maxWidth);
+    }
   }
   set font(font: string) {
     this.paint!.font = font;
@@ -348,7 +367,7 @@ export class GenPainter implements Painter {
     return this.paint?.font;
   }
   set globalAlpha(alpha: number) {
-    this.paint.globalAlpha = alpha;
+    this.paint!.globalAlpha = alpha;
   }
   measureText(text: string): TextMetrics {
     return this.paint?.measureText(text);
@@ -465,4 +484,18 @@ e 和 f 控制上下文的水平和垂直平移。
   }
   /*清空画布|刷新画布*/
   update() {}
+}
+
+function WithUpdateStrokeStyle(
+  target: any,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+) {
+  const originalMethod = descriptor.value;
+  descriptor.value = function (...args: any[]) {
+    this._updateStrokeStyle?.(); // 如果存在方法就调用
+    return originalMethod.apply(this, args);
+  };
+
+  return descriptor;
 }

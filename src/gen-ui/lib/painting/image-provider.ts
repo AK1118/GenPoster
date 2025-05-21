@@ -7,6 +7,7 @@ import {
   ImageProviderLoadConfiguration,
   ImageStreamPayload,
 } from "../core/base-types";
+import { ArgumentError } from "../core/errors";
 
 abstract class ImageProviderLifecycleMethods implements ImageProviderLifecycle {
   private lifecycle?: ImageProviderLifecycle;
@@ -70,6 +71,7 @@ export abstract class ImageProvider extends ImageProviderLifecycleMethods {
             return resolve(this._cachedImagePayload);
           this.onLoadStart();
           const imageLoadPayload = await this.performLoad();
+          if(!imageLoadPayload) new ArgumentError("Image Load Failed!")
           this.onLoadEnd(imageLoadPayload);
           this._cachedImagePayload = imageLoadPayload;
           resolve(imageLoadPayload);
@@ -125,7 +127,10 @@ export class NetWorkImageProvider extends ImageProvider {
 }
 
 export type AssetsImageUrlBuilder = (() => Promise<string> | string) | string;
-export type AssetsImageLifecycle =  Omit<Partial<ImageProviderLifecycle>, "onProgress">;
+export type AssetsImageLifecycle = Omit<
+  Partial<ImageProviderLifecycle>,
+  "onProgress"
+>;
 export class AssetsImageProvider extends ImageProvider {
   private _assetsImageUrl: AssetsImageUrlBuilder;
   constructor({
@@ -144,15 +149,19 @@ export class AssetsImageProvider extends ImageProvider {
         ? this._assetsImageUrl()
         : this._assetsImageUrl;
     const url = urlBuilt instanceof Promise ? await urlBuilt : urlBuilt;
-    const image = await this.loadAssetsStrategy.load({
-      url: url,
-    });
-    const size = await this.loadAssetsStrategy.getImageSize(image, {
-      url: url,
-    });
-    return {
-      size,
-      image,
-    };
+    try {
+      const image = await this.loadAssetsStrategy.load({
+        url: url,
+      });
+      const size = await this.loadAssetsStrategy.getImageSize(image, {
+        url: url,
+      });
+      return {
+        size,
+        image,
+      };
+    } catch (e) {
+      return null;
+    }
   }
 }
